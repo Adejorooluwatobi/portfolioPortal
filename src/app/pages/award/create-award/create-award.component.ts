@@ -1,69 +1,87 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-create-award',
-//   imports: [],
-//   templateUrl: './create-award.component.html',
-//   styleUrl: './create-award.component.css'
-// })
-// export class AwardFormComponent {
-
-// }
-// import { Component } from '@angular/core';
-// import { HttpClient } from '@angular/common/http';
-// import { Router } from '@angular/router';
-// import { FormsModule } from '@angular/forms';
-// import { Award } from '../../models/award.model';
-
-// @Component({
-//   selector: 'app-create-award',
-//   templateUrl: './create-award.component.html',
-//   styleUrls: ['./create-award.component.css'],
-//   imports: [FormsModule]
-// })
-// export class AwardFormComponent {
-//   award: Award = {
-//     project: '',
-//     title: '',
-//     images: '',
-//     position: ''
-//   };
-
-//   constructor(private http: HttpClient, private router: Router) {}
-
-//   onSubmit() {
-//     this.http.post('http://localhost:4000/award', this.award).subscribe(response => {
-//       console.log('Award submitted', response);
-//       this.router.navigate(['app/award']);
-//     });
-//   }
-// }
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { Award } from '../../../models/award.model';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { environment } from '../../../environments/environment';
+import { CommonModule } from '@angular/common';
+import { SharedModule } from '../../../shared/layout/shared.module';
 
 @Component({
   selector: 'app-create-award',
-  imports: [FormsModule],
+  standalone: true,
+  imports: [CommonModule, SharedModule, ReactiveFormsModule],
   templateUrl: './create-award.component.html',
-  styleUrl: './create-award.component.css'
+  styleUrls: ['./create-award.component.css']
 })
 export class CreateAwardComponent {
-  award: Award = {
-    project: '',
-    title: '',
-    images: '',
-    position: ''
-  };
+  awardForm!: FormGroup;
+  imagePreview: string | ArrayBuffer | null = null;
+  selectedFile: File | null = null;
+  submitting = false;
+  errorMessage = '';
 
-  constructor(private router: Router) {}
-
-  onSubmit() {
-    //localStorage.setItem('authToken', 'your-auth-token');
-    this.router.navigate(['app/award']);
-    console.log('Award submitted:', this.award);
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private fb: FormBuilder
+  ) {
+    this.initForm();
   }
 
-  
+  initForm(): void {
+    this.awardForm = this.fb.group({
+      title: ['', [Validators.required]],
+      position: ['', [Validators.required]],
+      ViewProject: ['', [Validators.required]]
+    });
+  }
+
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length) {
+      this.selectedFile = input.files[0];
+      
+      // Create a preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result;
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
+  }
+
+  onSubmit(): void {
+    if (this.awardForm.invalid || !this.selectedFile) {
+      if (!this.selectedFile) {
+        this.errorMessage = 'Please select an image';
+      }
+      return;
+    }
+
+    this.submitting = true;
+    this.errorMessage = '';
+
+    const formData = new FormData();
+    formData.append('title', this.awardForm.get('title')?.value);
+    formData.append('position', this.awardForm.get('position')?.value);
+    formData.append('ViewProject', this.awardForm.get('ViewProject')?.value);
+    formData.append('image', this.selectedFile);
+
+    this.http.post(`${environment.apiUrl}award`, formData)
+      .subscribe({
+        next: (response) => {
+          console.log('Award created successfully:', response);
+          this.router.navigate(['app/award']);
+        },
+        error: (error) => {
+          console.error('Error creating award:', error);
+          this.errorMessage = error.error?.error || 'Failed to create award';
+          this.submitting = false;
+        }
+      });
+  }
+
+  cancel(): void {
+    this.router.navigate(['app/award']);
+  }
 }

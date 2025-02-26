@@ -27,6 +27,7 @@ import { CreateTestimonialComponent } from './pages/testimonial/create-testimoni
 import { AuthGuard } from './guards/auth.gaurd';
 import { ForgetPasswordComponent } from './pages/forget-password/forget-password.component';
 import { EditProjectComponent } from './pages/project/edit-project/edit-project.component';
+import { EditAwardComponent } from './pages/award/edit-award/edit-award.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -105,6 +106,11 @@ export const routes: Routes = [
         {
             path: 'create-award',
             component: CreateAwardComponent,
+            canActivate: [AuthGuard]
+        },
+        {
+            path: 'edit-award/:id',
+            component: EditAwardComponent,
             canActivate: [AuthGuard]
         },
         {
