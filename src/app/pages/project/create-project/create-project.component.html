@@ -1,89 +1,43 @@
-
-  <!-- Main Content -->
-  <div class="main-content">
-    <section class="section">
-      <div class="section-body">
-        <div class="row">
-          <div class="col-12 col-md-6 col-lg-6">
-            <div class="card">
-              <div class="card-header">
-                <h4>Input Text</h4>
+<!-- Main Content -->
+<div class="main-content">
+  <section class="section">
+    <div class="section-body">
+      <div class="row">
+        <div class="col-12 col-md-8 col-lg-8 mx-auto">
+          <div class="card">
+            <div class="card-header">
+              <h4>Create New Project</h4>
+            </div>
+            <div class="card-body">
+              <div *ngIf="errorMessage" class="alert alert-danger">
+                {{ errorMessage }}
               </div>
-              <div class="card-body">
+              <form (ngSubmit)="createProject()">
                 <div class="form-group">
-                  <label>Default Input Text</label>
-                  <input type="text" class="form-control">
+                  <label for="title">Project Title</label>
+                  <input type="text" class="form-control" id="title" [(ngModel)]="projectData.title" name="title" required>
                 </div>
                 <div class="form-group">
-                  <label>Phone Number (US Format)</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <div class="input-group-text">
-                        <i class="fas fa-phone"></i>
-                      </div>
-                    </div>
-                    <input type="text" class="form-control phone-number">
+                  <label for="content">Project Description</label>
+                  <textarea class="form-control" id="content" [(ngModel)]="projectData.content" name="content" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="image">Project Image</label>
+                  <input type="file" class="form-control" id="image" (change)="onFileSelected($event)" accept="image/*" required>
+                  <div *ngIf="imagePreview" class="mt-2">
+                    <p>Image preview:</p>
+                    <img [src]="imagePreview" alt="Image preview" style="max-width: 200px; max-height: 200px;">
                   </div>
                 </div>
-                <div class="form-group">
-                  <label>Default Select</label>
-                  <select class="form-control">
-                    <option>Option 1</option>
-                    <option>Option 2</option>
-                    <option>Option 3</option>
-                  </select>
+                <div class="form-group text-right">
+                  <button type="button" class="btn btn-secondary mr-2" (click)="cancelCreate()">Cancel</button>
+                  <button type="submit" class="btn btn-primary">Create Project</button>
                 </div>
-                <div class="form-group">
-                  <label>Password Strength</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <div class="input-group-text">
-                        <i class="fas fa-lock"></i>
-                      </div>
-                    </div>
-                    <input type="password" class="form-control pwstrength" data-indicator="pwindicator">
-                  </div>
-                  <div id="pwindicator" class="pwindicator">
-                    <div class="bar"></div>
-                    <div class="label"></div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label>Currency</label>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <div class="input-group-text">
-                        $
-                      </div>
-                    </div>
-                    <input type="text" class="form-control currency">
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label>Purchase Code</label>
-                  <input type="text" class="form-control purchase-code" placeholder="ASDF-GHIJ-KLMN-OPQR">
-                </div>
-                <div class="form-group">
-                  <label>Invoice</label>
-                  <input type="text" class="form-control invoice-input">
-                </div>
-                <div class="form-group">
-                  <label>Date</label>
-                  <input type="text" class="form-control datemask" placeholder="YYYY/MM/DD">
-                </div>
-                <div class="form-group">
-                  <label>Credit Card</label>
-                  <input type="text" class="form-control creditcard">
-                </div>
-                <div class="form-group">
-                  <label>Tags</label>
-                  <input type="text" class="form-control inputtags">
-                </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
-    </section>
-    
-  </div>
+    </div>
+  </section>
+</div>

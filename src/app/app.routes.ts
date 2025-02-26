@@ -26,6 +26,7 @@ import { TestimonialComponent } from './pages/testimonial/testimonial/testimonia
 import { CreateTestimonialComponent } from './pages/testimonial/create-testimonial/create-testimonial.component';
 import { AuthGuard } from './guards/auth.gaurd';
 import { ForgetPasswordComponent } from './pages/forget-password/forget-password.component';
+import { EditProjectComponent } from './pages/project/edit-project/edit-project.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -124,6 +125,11 @@ export const routes: Routes = [
         {
             path: 'create-project',
                 component: CreateProjectComponent,
+                canActivate: [AuthGuard]
+        },
+        {
+            path: 'edit-project/:id',
+                component: EditProjectComponent,
                 canActivate: [AuthGuard]
         },
         {
